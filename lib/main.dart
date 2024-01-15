@@ -1,207 +1,133 @@
+import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:tetris_game_flutter/core/utils/utils.dart';
+import 'package:tetris_game_flutter/game/overlay/overlay.dart';
 import 'package:tetris_game_flutter/game/tetris_game.dart';
-import 'package:tetris_game_flutter/game/widgets/playing_game_overlay.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Flame.device.fullScreen();
+  await Flame.device.setPortraitUpOnly();
+
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
+  late TetrisGame game;
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    UserManagement().navigatorKey = _navigatorKey;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    game.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    game = TetrisGame(
+      screenSize: MediaQuery.of(context).size,
+    );
+    bool isLeftRightBusy = false;
+    bool slowDown = false;
+    UserManagement().getScreenHeight = MediaQuery.of(context).size.height;
+    UserManagement().getScreenWidth = MediaQuery.of(context).size.width;
+
     return MaterialApp(
+      navigatorKey: _navigatorKey,
       debugShowCheckedModeBanner: false, // <--- This line
       title: 'Tetris Game',
       builder: (BuildContext context, Widget? child) {
         final MediaQueryData data = MediaQuery.of(context);
         return MediaQuery(
-          data: data.copyWith(textScaler: const TextScaler.linear(1.0)),
-          child: SafeArea(child: child!),
+          data: data.copyWith(textScaler: const TextScaler.linear(1)),
+          child: GestureDetector(
+              onHorizontalDragUpdate: (DragUpdateDetails details) async {
+                if (!isLeftRightBusy) {
+                  isLeftRightBusy = true;
+
+                  double sensitivity = 0.01;
+                  double delta = details.primaryDelta! * sensitivity;
+
+                  if (delta > 0) {
+                    game.playland.right();
+                  } else if (delta < 0) {
+                    game.playland.left();
+                  }
+
+                  // Introduce a delay, adjust the duration as needed
+                  await Future.delayed(const Duration(milliseconds: 90));
+
+                  isLeftRightBusy = false;
+                }
+              },
+              onVerticalDragUpdate: (DragUpdateDetails details) {
+                if (details.primaryDelta! > 16) {
+                  game.playland.drop();
+                }
+                if (!slowDown) {
+                  slowDown = true;
+
+                  double sensitivity = 0.01;
+                  double delta = details.primaryDelta! * sensitivity;
+
+                  if (delta > 0) {
+                    game.playSoundMoveDown();
+                    game.playland.down(step: 2);
+                  }
+
+                  Future.delayed(const Duration(milliseconds: 50), () {
+                    slowDown = false;
+                  });
+                }
+              },
+              child: SafeArea(child: child!)),
         );
       },
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       home: Scaffold(
-        backgroundColor: Colors.yellow,
-        body: SizedBox(
-          height: MediaQuery.of(context).size.height,
+        body: Container(
           width: MediaQuery.of(context).size.width,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const SizedBox(
-                height: 4,
-              ),
-              SizedBox(
-                height: 485,
-                width: 375,
-                child: Row(
-                  children: [
-                    Container(
-                      width: 257,
-                      height: 479,
-                      color: const Color(0xFF9EAD86),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: const Color(0xFF9EAD86),
-                              border:
-                                  Border.all(color: Colors.black, width: 1.5)),
-                          child: GameWidget(
-                            game: TetrisGame(),
-                          ),
-                        ),
-                      ),
+          height: MediaQuery.of(context).size.height,
+          padding: const EdgeInsets.all(0),
+          color: const Color(0xFF9EAD86),
+          child: GameWidget.controlled(
+              initialActiveOverlays: [
+                ScoreGameOverlay.keyOverlay,
+                ControlGame.keyOverlay,
+                StartGameOverlay.keyOverlay,
+              ],
+              gameFactory: () => game,
+              overlayBuilderMap: {
+                ControlGame.keyOverlay: (context, game) => ControlGame(
+                      game: game as TetrisGame,
                     ),
-                    Expanded(
-                        flex: 1,
-                        child: Container(
-                            height: 479, color: const Color(0xFF9EAD86))),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(20),
-                color: Colors.white,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.35,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            padding: const EdgeInsets.all(0),
-                          ),
-                          onPressed: () {},
-                          icon: const Icon(Icons.pause, color: Colors.white),
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        IconButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            padding: const EdgeInsets.all(0),
-                          ),
-                          onPressed: () {},
-                          icon: const Icon(Icons.volume_mute_sharp,
-                              color: Colors.white),
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        IconButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            padding: const EdgeInsets.all(0),
-                          ),
-                          onPressed: () {},
-                          icon: const Icon(Icons.refresh, color: Colors.white),
-                        ),
-                      ],
+                StartGameOverlay.keyOverlay: (context, game) =>
+                    StartGameOverlay(
+                      game: game as TetrisGame,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                            height: 100,
-                            width: 100,
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                ),
-                                onPressed: () {},
-                                child: const Text(""))),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 50,
-                              width: 50,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                    padding: const EdgeInsets.all(0),
-                                    minimumSize: const Size(0, 0),
-                                    maximumSize: const Size(30, 30)),
-                                onPressed: () {},
-                                child: const SizedBox.shrink(),
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  height: 50,
-                                  width: 50,
-                                  child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.red,
-                                          padding: const EdgeInsets.all(0),
-                                          minimumSize: const Size(0, 0),
-                                          maximumSize: const Size(30, 30)),
-                                      onPressed: () {},
-                                      child: const SizedBox.shrink()),
-                                ),
-                                const SizedBox(
-                                  width: 50,
-                                ),
-                                SizedBox(
-                                  height: 50,
-                                  width: 50,
-                                  child: ElevatedButton(
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.red,
-                                          padding: const EdgeInsets.all(0),
-                                          minimumSize: const Size(0, 0),
-                                          maximumSize: const Size(30, 30)),
-                                      child: const SizedBox.shrink()),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 50,
-                              width: 50,
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.red,
-                                      padding: const EdgeInsets.all(0),
-                                      minimumSize: const Size(0, 0),
-                                      maximumSize: const Size(30, 30)),
-                                  onPressed: () {},
-                                  child: const SizedBox.shrink()),
-                            ),
-                          ],
-                        ),
-                      ],
+                ScoreGameOverlay.keyOverlay: (context, game) =>
+                    ScoreGameOverlay(
+                      game: game as TetrisGame,
                     ),
-                    const Text(
-                      "Make by dduc with all my heart ❤️",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+              }),
         ),
       ),
     );
