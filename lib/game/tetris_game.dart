@@ -38,8 +38,7 @@ class TetrisGame extends FlameGame with KeyboardEvents, TapCallbacks {
     size.setValues(screenSize.width, screenSize.height);
     WIDTH = 285;
     HEIGHT = 569;
-    AudioManager.instance.stopBgm();
-    AudioManager.instance.dispose();
+
     AudioManager.instance.initAudio();
 
     playland.y = playland.position.y = size.y * 0.12;
