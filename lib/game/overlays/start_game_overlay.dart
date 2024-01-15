@@ -16,7 +16,9 @@ class StartGameOverlay extends StatelessWidget {
         child: Center(
           child: InkWell(
               onTap: () {
-                game.startGame();
+                game.startCountDown(
+                  key: keyOverlay,
+                );
               },
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

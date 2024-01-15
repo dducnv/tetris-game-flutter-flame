@@ -21,6 +21,8 @@ class TetrisGame extends FlameGame with KeyboardEvents, TapCallbacks {
 // ignore: constant_identifier_names, non_constant_identifier_names
   double HEIGHT = 0;
 
+  String startFrom = "";
+
   TetrisGame({
     required this.screenSize,
   });
@@ -36,7 +38,8 @@ class TetrisGame extends FlameGame with KeyboardEvents, TapCallbacks {
     size.setValues(screenSize.width, screenSize.height);
     WIDTH = 285;
     HEIGHT = 569;
-
+    AudioManager.instance.stopBgm();
+    AudioManager.instance.dispose();
     AudioManager.instance.initAudio();
 
     playland.y = playland.position.y = size.y * 0.12;
@@ -102,6 +105,27 @@ class TetrisGame extends FlameGame with KeyboardEvents, TapCallbacks {
     return KeyEventResult.ignored;
   }
 
+  void startCountDown({required String key}) {
+    startFrom = key;
+    AudioManager.instance.selectSound();
+    if (key == StartGameOverlay.keyOverlay) {
+      overlays.remove(StartGameOverlay.keyOverlay);
+    } else if (key == PlayAgainOverlay.keyOverlay) {
+      overlays.remove(PlayAgainOverlay.keyOverlay);
+    }
+
+    overlays.add(CountdownOverlay.keyOverlay);
+  }
+
+  void endCountDown() {
+    overlays.remove(CountdownOverlay.keyOverlay);
+    if (startFrom == PlayAgainOverlay.keyOverlay) {
+      playAgain();
+    } else {
+      startGame();
+    }
+  }
+
   void initTimer() {
     timer?.cancel();
     timer = null;
@@ -126,7 +150,6 @@ class TetrisGame extends FlameGame with KeyboardEvents, TapCallbacks {
     playland.gameInit();
     AudioManager.instance.selectSound();
     AudioManager.instance.startBgm();
-    overlays.remove(StartGameOverlay.keyOverlay);
     initTimer();
   }
 
@@ -134,7 +157,6 @@ class TetrisGame extends FlameGame with KeyboardEvents, TapCallbacks {
     if (!gameProvider.startGame) {
       return;
     }
-    overlays.remove(PlayAgainOverlay.keyOverlay);
     playland.gameInit();
     initTimer();
     AudioManager.instance.stopBgm();

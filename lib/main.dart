@@ -119,6 +119,10 @@ class _MyAppState extends State<MyApp> {
                     PlayAgainOverlay(
                       game: game as TetrisGame,
                     ),
+                CountdownOverlay.keyOverlay: (context, game) =>
+                    CountdownOverlay(
+                      game: game as TetrisGame,
+                    ),
                 ScoreGameOverlay.keyOverlay: (context, game) =>
                     ScoreGameOverlay(
                       game: game as TetrisGame,

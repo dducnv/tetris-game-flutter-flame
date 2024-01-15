@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:tetris_game_flutter/core/utils/user_manager.dart';
 
 class Constants {

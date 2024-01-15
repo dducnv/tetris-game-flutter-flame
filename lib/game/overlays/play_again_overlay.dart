@@ -17,7 +17,9 @@ class PlayAgainOverlay extends StatelessWidget {
       child: Center(
         child: InkWell(
           onTap: () {
-            game.playAgain();
+            game.startCountDown(
+              key: keyOverlay,
+            );
           },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
