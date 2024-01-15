@@ -32,9 +32,9 @@ class AudioManager {
   }
 
   void startBgm() {
-    // if (_gameProvider.playSound) {
-    //   PlayAudio.instance.startBgm(fileName: 'theme_song.mp3', volume: 0.5);
-    // }
+    if (_playSound) {
+      PlayAudio.instance.startBgm(fileName: 'theme_song.mp3', volume: 0.5);
+    }
   }
 
   void stopBgm() {
