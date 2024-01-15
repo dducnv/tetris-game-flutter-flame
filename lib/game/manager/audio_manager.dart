@@ -1,12 +1,11 @@
 import 'package:tetris_game_flutter/core/core.dart';
-import 'package:tetris_game_flutter/game/game.dart';
 
 class AudioManager {
   AudioManager._internal();
   static final AudioManager _instance = AudioManager._internal();
   static AudioManager get instance => _instance;
 
-  final GameProvider _gameProvider = GameProvider();
+  bool _playSound = true;
   void initAudio() {
     PlayAudio.instance.init(
       [
@@ -22,10 +21,20 @@ class AudioManager {
     );
   }
 
+  void turnOffSound() {
+    _playSound = false;
+    stopBgm();
+  }
+
+  void turnOnSound() {
+    _playSound = true;
+    startBgm();
+  }
+
   void startBgm() {
-    if (_gameProvider.playSound) {
-      PlayAudio.instance.startBgm(fileName: 'theme_song.mp3');
-    }
+    // if (_gameProvider.playSound) {
+    //   PlayAudio.instance.startBgm(fileName: 'theme_song.mp3', volume: 0.5);
+    // }
   }
 
   void stopBgm() {
@@ -41,43 +50,44 @@ class AudioManager {
   }
 
   void cleanSound() {
-    if (_gameProvider.playSound) {
+    if (_playSound) {
       PlayAudio.instance.playSfx('clean.mp3');
     }
   }
 
   void dropSound() {
-    if (_gameProvider.playSound) {
+    if (_playSound) {
       PlayAudio.instance.playSfx('sounds_drop.wav');
     }
   }
 
   void selectSound() {
-    if (_gameProvider.playSound) {
+    if (_playSound) {
       PlayAudio.instance.playSfx('sounds_select.wav');
     }
   }
 
   void moveSound() {
-    if (_gameProvider.playSound) {
+    if (_playSound) {
       PlayAudio.instance.playSfx('move.mp3');
     }
   }
 
   void rotateSound() {
-    if (_gameProvider.playSound) {
+    if (_playSound) {
+      print(_playSound);
       PlayAudio.instance.playSfx('rotate.mp3');
     }
   }
 
   void startSound() {
-    if (_gameProvider.playSound) {
+    if (_playSound) {
       PlayAudio.instance.playSfx('start.mp3');
     }
   }
 
   void explosionSound() {
-    if (_gameProvider.playSound) {
+    if (_playSound) {
       PlayAudio.instance.playSfx('explosion.mp3');
     }
   }

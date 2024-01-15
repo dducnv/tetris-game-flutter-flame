@@ -166,9 +166,9 @@ class TetrisGame extends FlameGame with KeyboardEvents, TapCallbacks {
       return;
     }
     if (gameProvider.playSound) {
-      AudioManager.instance.stopBgm();
+      AudioManager.instance.turnOffSound();
     } else {
-      AudioManager.instance.startBgm();
+      AudioManager.instance.turnOnSound();
     }
     gameProvider.sound();
   }
