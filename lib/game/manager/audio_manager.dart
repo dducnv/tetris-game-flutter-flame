@@ -1,40 +1,88 @@
-import 'package:flame_audio/flame_audio.dart';
+import 'package:tetris_game_flutter/core/core.dart';
+import 'package:tetris_game_flutter/game/game.dart';
 
 class AudioManager {
   AudioManager._internal();
   static final AudioManager _instance = AudioManager._internal();
   static AudioManager get instance => _instance;
 
-  Future<void> init(List<String> files) async {
-    FlameAudio.bgm.initialize();
-    await FlameAudio.audioCache.loadAll(files);
+  final GameProvider _gameProvider = GameProvider();
+  void initAudio() {
+    PlayAudio.instance.init(
+      [
+        'clean.mp3',
+        'sounds_drop.wav',
+        'sounds_select.wav',
+        'move.mp3',
+        'rotate.mp3',
+        'start.mp3',
+        'explosion.mp3',
+        'theme_song.mp3'
+      ],
+    );
   }
 
-  void startBgm({required String fileName, double? volume}) {
-    if (!FlameAudio.bgm.isPlaying) {
-      FlameAudio.bgm.play(fileName, volume: volume ?? 1);
+  void startBgm() {
+    if (_gameProvider.playSound) {
+      PlayAudio.instance.startBgm(fileName: 'theme_song.mp3');
     }
   }
 
-  void resetBgm() {}
-
-  void dispose() {
-    FlameAudio.bgm.dispose();
+  void stopBgm() {
+    PlayAudio.instance.stopBgm();
   }
 
   void pauseBgm() {
-    FlameAudio.bgm.pause();
+    PlayAudio.instance.pauseBgm();
   }
 
   void resumeBgm() {
-    FlameAudio.bgm.resume();
+    PlayAudio.instance.resumeBgm();
   }
 
-  void stopBgm() {
-    FlameAudio.bgm.stop();
+  void cleanSound() {
+    if (_gameProvider.playSound) {
+      PlayAudio.instance.playSfx('clean.mp3');
+    }
   }
 
-  void playSfx(String fileName) {
-    FlameAudio.play(fileName);
+  void dropSound() {
+    if (_gameProvider.playSound) {
+      PlayAudio.instance.playSfx('sounds_drop.wav');
+    }
+  }
+
+  void selectSound() {
+    if (_gameProvider.playSound) {
+      PlayAudio.instance.playSfx('sounds_select.wav');
+    }
+  }
+
+  void moveSound() {
+    if (_gameProvider.playSound) {
+      PlayAudio.instance.playSfx('move.mp3');
+    }
+  }
+
+  void rotateSound() {
+    if (_gameProvider.playSound) {
+      PlayAudio.instance.playSfx('rotate.mp3');
+    }
+  }
+
+  void startSound() {
+    if (_gameProvider.playSound) {
+      PlayAudio.instance.playSfx('start.mp3');
+    }
+  }
+
+  void explosionSound() {
+    if (_gameProvider.playSound) {
+      PlayAudio.instance.playSfx('explosion.mp3');
+    }
+  }
+
+  void dispose() {
+    PlayAudio.instance.dispose();
   }
 }

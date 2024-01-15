@@ -12,6 +12,7 @@ class TetrisGame extends FlameGame with KeyboardEvents, TapCallbacks {
   Playland playland = Playland();
   StatusLand statusLand = StatusLand();
   GameProvider gameProvider = GameProvider();
+  GameStates gameStates = GameStates.none;
 
   Timer? timer;
 
@@ -36,20 +37,7 @@ class TetrisGame extends FlameGame with KeyboardEvents, TapCallbacks {
     WIDTH = 285;
     HEIGHT = 569;
 
-    AudioManager.instance.init(
-      [
-        'clean.mp3',
-        'sounds_drop.wav',
-        'sounds_select.wav',
-        'move.mp3',
-        'rotate.mp3',
-        'start.mp3',
-        'explosion.mp3',
-        'theme_song.mp3'
-      ],
-    );
-
-    AudioManager.instance.stopBgm();
+    AudioManager.instance.initAudio();
 
     playland.y = playland.position.y = size.y * 0.12;
     playland.position.x = (size.x - WIDTH) / 2 - 5;
@@ -67,7 +55,13 @@ class TetrisGame extends FlameGame with KeyboardEvents, TapCallbacks {
 
   @override
   void onTapUp(TapUpEvent event) {
-    playland.clickScreenToStart();
+    if (gameStates == GameStates.none) {
+      playAgain();
+    } else if (gameStates == GameStates.paused) {
+      pauseResumeGame();
+    } else {
+      rotate();
+    }
   }
 
   @override
@@ -85,7 +79,7 @@ class TetrisGame extends FlameGame with KeyboardEvents, TapCallbacks {
     final isKeyR = keysPressed.contains(LogicalKeyboardKey.keyR);
 
     if (isKeyDown && isSpace) {
-      playland.startOrDrop();
+      // playland.startOrDrop();
 
       return KeyEventResult.handled;
     } else if (isKeyDown && isArrowLeft) {
@@ -108,74 +102,148 @@ class TetrisGame extends FlameGame with KeyboardEvents, TapCallbacks {
     return KeyEventResult.ignored;
   }
 
-  void playGame() {
-    playland.start();
-    gameProvider.start();
-    start();
-    AudioManager.instance.playSfx('sounds_select.wav');
-    playBgSound();
-    overlays.remove(StartGameOverlay.keyOverlay);
-  }
-
-  void playBgSound() {
-    AudioManager.instance.startBgm(
-      fileName: 'theme_song.mp3',
-      volume: 0.3,
-    );
-  }
-
-  void start() {
+  void initTimer() {
     timer?.cancel();
     timer = null;
     timer = Timer.periodic(
       FALL_SPEED[gameProvider.level - 1],
       (timer) {
-        playland.down();
+        moveDown();
       },
     );
   }
 
-  void offSound() {
+  void resetTimer() {
+    timer?.cancel();
+    timer = null;
+  }
+
+  void startGame() {
+    if (gameStates == GameStates.running) {
+      return;
+    }
+    gameProvider.start();
+    playland.gameInit();
+    AudioManager.instance.selectSound();
+    AudioManager.instance.startBgm();
+    overlays.remove(StartGameOverlay.keyOverlay);
+    initTimer();
+  }
+
+  void playAgain() {
     if (!gameProvider.startGame) {
       return;
     }
-    if (gameProvider.playSfx) {
-      AudioManager.instance.stopBgm();
-    } else {
-      playBgSound();
-    }
-
-    gameProvider.sound();
+    overlays.remove(PlayAgainOverlay.keyOverlay);
+    playland.gameInit();
+    initTimer();
+    AudioManager.instance.stopBgm();
+    AudioManager.instance.selectSound();
+    AudioManager.instance.startBgm();
   }
 
-  void playSoundMoveDown() {
-    if (gameProvider.playSfx) {
-      AudioManager.instance.playSfx('move.mp3');
-    }
-  }
-
-  void pause() {
+  void pauseResumeGame() {
     if (!gameProvider.startGame) {
       return;
     }
-    if (paused) {
-      start();
-      playland.pause();
+    if (paused || gameStates == GameStates.paused) {
+      gameStates = GameStates.running;
+      AudioManager.instance.resumeBgm();
+      initTimer();
       gameProvider.pause(false);
       resumeEngine();
     } else {
-      playland.pause();
-      timer?.cancel();
-      timer = null;
+      gameStates = GameStates.paused;
+      resetTimer();
+      AudioManager.instance.pauseBgm();
       gameProvider.pause(true);
       pauseEngine();
     }
   }
 
-  //remoee and dispose
-  void dispose() {
-    timer?.cancel();
-    timer = null;
-    AudioManager.instance.dispose();
+  void pauseResumeSound() {
+    if (!gameProvider.startGame) {
+      return;
+    }
+    if (gameProvider.playSound) {
+      AudioManager.instance.stopBgm();
+    } else {
+      AudioManager.instance.startBgm();
+    }
+    gameProvider.sound();
+  }
+
+  void resetGame() {
+    if (!gameProvider.startGame) {
+      return;
+    }
+    if (gameStates == GameStates.none ||
+        gameStates == GameStates.reset ||
+        gameStates == GameStates.paused) {
+      return;
+    }
+
+    playland.reset();
+  }
+
+  void moveLeft() {
+    if (!gameProvider.startGame) {
+      return;
+    }
+    if (gameStates != GameStates.running) {
+      return;
+    }
+    playland.left();
+  }
+
+  void moveRight() {
+    if (!gameProvider.startGame) {
+      return;
+    }
+    if (gameStates != GameStates.running) {
+      return;
+    }
+    playland.right();
+  }
+
+  void moveDown() {
+    if (!gameProvider.startGame) {
+      return;
+    }
+    if (gameStates != GameStates.running) {
+      return;
+    }
+    playland.down();
+  }
+
+  void rotate() {
+    if (!gameProvider.startGame) {
+      return;
+    }
+    if (gameStates != GameStates.running) {
+      return;
+    }
+    playland.rotate();
+  }
+
+  void quickMoveDown() {
+    if (!gameProvider.startGame) {
+      return;
+    }
+    if (gameStates != GameStates.running) {
+      return;
+    }
+    AudioManager.instance.moveSound();
+    playland.down(step: 3);
+  }
+
+  void quickDrop() {
+    if (!gameProvider.startGame) {
+      return;
+    }
+    if (gameStates != GameStates.running) {
+      return;
+    }
+    playland.drop();
   }
 }

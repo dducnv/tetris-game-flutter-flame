@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:tetris_game_flutter/game/game.dart';
 
@@ -49,7 +50,7 @@ class ControlGame extends StatelessWidget {
                           focusColor: Colors.black,
                           hoverColor: Colors.black,
                           onTap: () {
-                            game.pause();
+                            game.pauseResumeGame();
                           },
                           child: Container(
                             height: 40,
@@ -68,7 +69,7 @@ class ControlGame extends StatelessWidget {
                     Column(
                       children: [
                         Selector<GameProvider, bool>(
-                          selector: (_, provider) => provider.playSfx,
+                          selector: (_, provider) => provider.playSound,
                           builder: (_, soundOff, __) => Row(
                             children: [
                               Icon(
@@ -91,7 +92,7 @@ class ControlGame extends StatelessWidget {
                           focusColor: Colors.black,
                           hoverColor: Colors.black,
                           onTap: () {
-                            game.offSound();
+                            game.pauseResumeSound();
                           },
                           child: Container(
                             height: 40,
@@ -108,12 +109,21 @@ class ControlGame extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    const Text("Reset"),
+                    Text(
+                      "Reset",
+                      style: GoogleFonts.getFont(
+                        'Chakra Petch',
+                        textStyle: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
                     InkWell(
                       focusColor: Colors.black,
                       hoverColor: Colors.black,
                       onTap: () {
-                        game.playland.reset();
+                        game.resetGame();
                       },
                       child: Container(
                         height: 40,

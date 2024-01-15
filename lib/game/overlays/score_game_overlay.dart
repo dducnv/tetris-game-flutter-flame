@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:tetris_game_flutter/game/game.dart';
 
@@ -12,7 +13,7 @@ class ScoreGameOverlay extends StatelessWidget {
     return ChangeNotifierProvider.value(
         value: game.gameProvider,
         child: Padding(
-          padding: EdgeInsets.only(top: game.size.y * 0.03),
+          padding: EdgeInsets.only(top: game.size.y * 0.025),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -31,10 +32,18 @@ class ScoreGameOverlay extends StatelessWidget {
                               // mainAxisAlignment: MainAxisAlignment.end,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   "Points",
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 12),
+                                  style: GoogleFonts.getFont(
+                                    'Chakra Petch',
+                                    textStyle: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
                                 ),
                                 DigitalNumber(
                                   value: points,
@@ -53,10 +62,18 @@ class ScoreGameOverlay extends StatelessWidget {
                             builder: (_, cleared, __) => Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   "Cleans",
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 12),
+                                  style: GoogleFonts.getFont(
+                                    'Chakra Petch',
+                                    textStyle: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
                                 ),
                                 DigitalNumber(
                                   value: cleared,
@@ -75,10 +92,18 @@ class ScoreGameOverlay extends StatelessWidget {
                             builder: (_, level, __) => Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   "Level",
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 12),
+                                  style: GoogleFonts.getFont(
+                                    'Chakra Petch',
+                                    textStyle: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
                                 ),
                                 DigitalNumber(
                                   value: level,

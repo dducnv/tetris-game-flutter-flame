@@ -6,8 +6,8 @@ class GameProvider extends ChangeNotifier {
   bool _isPause = false;
   bool get isPause => _isPause;
 
-  bool _playSfx = true;
-  bool get playSfx => _playSfx;
+  bool _playSound = true;
+  bool get playSound => _playSound;
 
   bool _startGame = false;
   bool get startGame => _startGame;
@@ -29,7 +29,7 @@ class GameProvider extends ChangeNotifier {
   }
 
   void sound() {
-    _playSfx = !_playSfx;
+    _playSound = !_playSound;
     notifyListeners();
   }
 

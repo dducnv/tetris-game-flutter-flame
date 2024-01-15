@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tetris_game_flutter/game/game.dart';
 
 class StatusLand extends PositionComponent with HasGameRef<TetrisGame> {
@@ -11,9 +12,12 @@ class StatusLand extends PositionComponent with HasGameRef<TetrisGame> {
   @override
   FutureOr<void> onLoad() {
     TextPaint textPaint = TextPaint(
-      style: const TextStyle(
-        color: Colors.black26,
-        fontSize: 15,
+      style: GoogleFonts.getFont(
+        'Chakra Petch',
+        textStyle: const TextStyle(
+          color: Colors.black,
+          fontSize: 12,
+        ),
       ),
     );
     nextBlockComponent.position = Vector2(0, 15);

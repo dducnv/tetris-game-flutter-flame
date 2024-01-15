@@ -32,12 +32,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    game.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     game = TetrisGame(
       screenSize: MediaQuery.of(context).size,
@@ -64,9 +58,9 @@ class _MyAppState extends State<MyApp> {
                   double delta = details.primaryDelta! * sensitivity;
 
                   if (delta > 0) {
-                    game.playland.right();
+                    game.moveRight();
                   } else if (delta < 0) {
-                    game.playland.left();
+                    game.moveLeft();
                   }
 
                   // Introduce a delay, adjust the duration as needed
@@ -77,7 +71,7 @@ class _MyAppState extends State<MyApp> {
               },
               onVerticalDragUpdate: (DragUpdateDetails details) {
                 if (details.primaryDelta! > 16) {
-                  game.playland.drop();
+                  game.quickDrop();
                 }
                 if (!slowDown) {
                   slowDown = true;
@@ -86,8 +80,7 @@ class _MyAppState extends State<MyApp> {
                   double delta = details.primaryDelta! * sensitivity;
 
                   if (delta > 0) {
-                    game.playSoundMoveDown();
-                    game.playland.down(step: 2);
+                    game.quickMoveDown();
                   }
 
                   Future.delayed(const Duration(milliseconds: 50), () {
@@ -120,6 +113,10 @@ class _MyAppState extends State<MyApp> {
                     ),
                 StartGameOverlay.keyOverlay: (context, game) =>
                     StartGameOverlay(
+                      game: game as TetrisGame,
+                    ),
+                PlayAgainOverlay.keyOverlay: (context, game) =>
+                    PlayAgainOverlay(
                       game: game as TetrisGame,
                     ),
                 ScoreGameOverlay.keyOverlay: (context, game) =>
