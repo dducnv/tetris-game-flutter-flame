@@ -1,9 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:tetris_game_flutter/core/enums/enums.dart';
-import 'package:tetris_game_flutter/game/components/components.dart';
-import 'package:tetris_game_flutter/game/manager/manager.dart';
-import 'package:tetris_game_flutter/game/tetris_game.dart';
+import 'package:tetris_game_flutter/core/core.dart';
+import 'package:tetris_game_flutter/game/game.dart';
 
 class Playland extends PositionComponent
     with HasGameRef<TetrisGame>, KeyboardHandler {

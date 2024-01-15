@@ -1,9 +1,8 @@
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:tetris_game_flutter/core/utils/utils.dart';
-import 'package:tetris_game_flutter/game/overlay/overlay.dart';
-import 'package:tetris_game_flutter/game/tetris_game.dart';
+import 'package:tetris_game_flutter/core/core.dart';
+import 'package:tetris_game_flutter/game/game.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

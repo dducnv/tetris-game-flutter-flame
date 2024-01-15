@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tetris_game_flutter/game/providers/game_provider.dart';
-import 'package:tetris_game_flutter/game/tetris_game.dart';
+import 'package:tetris_game_flutter/game/game.dart';
 
 class ControlGame extends StatelessWidget {
   static String keyOverlay = "controlGameOverlay";

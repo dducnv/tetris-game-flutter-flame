@@ -3,30 +3,8 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:tetris_game_flutter/game/components/components.dart';
-import 'package:tetris_game_flutter/game/manager/manager.dart';
-import 'package:tetris_game_flutter/game/overlay/overlay.dart';
-import 'package:tetris_game_flutter/game/providers/providers.dart';
-
-// ignore: constant_identifier_names
-const LEVEL_MAX = 6;
-
-// ignore: constant_identifier_names
-const LEVEL_MIN = 1;
-
-// ignore: non_constant_identifier_names
-int GAME_PAD_MATRIX_H = 20;
-// ignore: non_constant_identifier_names
-int GAME_PAD_MATRIX_W = 10;
-
-const FALL_SPEED = [
-  Duration(milliseconds: 800),
-  Duration(milliseconds: 650),
-  Duration(milliseconds: 500),
-  Duration(milliseconds: 370),
-  Duration(milliseconds: 250),
-  Duration(milliseconds: 160),
-];
+import 'package:tetris_game_flutter/core/core.dart';
+import 'package:tetris_game_flutter/game/game.dart';
 
 class TetrisGame extends FlameGame with KeyboardEvents, TapCallbacks {
   final Size screenSize;

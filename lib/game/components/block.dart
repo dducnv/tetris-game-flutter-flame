@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:tetris_game_flutter/game/tetris_game.dart';
+import 'package:tetris_game_flutter/core/core.dart';
 
 // ignore: constant_identifier_names
 const BLOCK_SHAPES = {

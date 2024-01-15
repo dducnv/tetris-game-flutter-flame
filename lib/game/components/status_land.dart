@@ -3,8 +3,7 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:tetris_game_flutter/game/components/components.dart';
-import 'package:tetris_game_flutter/game/tetris_game.dart';
+import 'package:tetris_game_flutter/game/game.dart';
 
 class StatusLand extends PositionComponent with HasGameRef<TetrisGame> {
   NextBlockComponent nextBlockComponent = NextBlockComponent();
