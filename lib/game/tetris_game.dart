@@ -106,6 +106,7 @@ class TetrisGame extends FlameGame with KeyboardEvents, TapCallbacks {
 
   void startCountDown({required String key}) {
     startFrom = key;
+    gameStates = GameStates.countdown;
     AudioManager.instance.selectSound();
     if (key == StartGameOverlay.keyOverlay) {
       overlays.remove(StartGameOverlay.keyOverlay);

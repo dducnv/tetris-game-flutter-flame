@@ -6,4 +6,5 @@ enum GameStates {
   mixing,
   clear,
   drop,
+  countdown,
 }
